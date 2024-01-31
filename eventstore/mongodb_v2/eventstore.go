@@ -24,7 +24,10 @@ import (
 	"io"
 	"time"
 
-	"github.com/looplab/eventhorizon/mongoutils"
+	eh "github.com/looplab/eventhorizon"
+	// Register uuid.UUID as BSON type.
+	_ "github.com/looplab/eventhorizon/codec/bson"
+	"github.com/looplab/eventhorizon/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -32,20 +35,15 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/readconcern"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"go.mongodb.org/mongo-driver/mongo/writeconcern"
-
-	// Register uuid.UUID as BSON type.
-	_ "github.com/looplab/eventhorizon/codec/bson"
-
-	eh "github.com/looplab/eventhorizon"
-	"github.com/looplab/eventhorizon/uuid"
 )
 
 // EventStore is an eventhorizon.EventStore for MongoDB, using one collection
 // for all events and another to keep track of all aggregates/streams. It also
-// keeps track of the global position of events, stored as metadata.
+// keep tracks of the global position of events, stored as metadata.
 type EventStore struct {
 	client                  *mongo.Client
 	clientOwnership         clientOwnership
+	db                      *mongo.Database
 	events                  *mongo.Collection
 	streams                 *mongo.Collection
 	snapshots               *mongo.Collection
@@ -90,6 +88,7 @@ func newEventStoreWithClient(client *mongo.Client, clientOwnership clientOwnersh
 	s := &EventStore{
 		client:          client,
 		clientOwnership: clientOwnership,
+		db:              db,
 		events:          db.Collection("events"),
 		streams:         db.Collection("streams"),
 		snapshots:       db.Collection("snapshots"),
@@ -193,31 +192,16 @@ func WithEventHandlerInTX(h eh.EventHandler) Option {
 // Will return an error if provided parameters are equal.
 func WithCollectionNames(eventsColl, streamsColl string) Option {
 	return func(s *EventStore) error {
-		if err := mongoutils.CheckCollectionName(eventsColl); err != nil {
-			return fmt.Errorf("events collection: %w", err)
-		} else if err := mongoutils.CheckCollectionName(streamsColl); err != nil {
-			return fmt.Errorf("streams collection: %w", err)
-		} else if eventsColl == streamsColl {
+		if eventsColl == streamsColl {
 			return fmt.Errorf("custom collection names are equal")
 		}
 
-		db := s.events.Database()
-		s.events = db.Collection(eventsColl)
-		s.streams = db.Collection(streamsColl)
-
-		return nil
-	}
-}
-
-// WithSnapshotCollectionName uses different collections from the default "snapshots" collections.
-func WithSnapshotCollectionName(snapshotColl string) Option {
-	return func(s *EventStore) error {
-		if err := mongoutils.CheckCollectionName(snapshotColl); err != nil {
-			return fmt.Errorf("snapshot collection: %w", err)
+		if eventsColl == "" || streamsColl == "" {
+			return fmt.Errorf("missing collection name")
 		}
 
-		db := s.events.Database()
-		s.snapshots = db.Collection(snapshotColl)
+		s.events = s.db.Collection(eventsColl)
+		s.streams = s.db.Collection(streamsColl)
 
 		return nil
 	}
@@ -430,7 +414,7 @@ func (s *EventStore) Save(ctx context.Context, events []eh.Event, originalVersio
 
 // Load implements the Load method of the eventhorizon.EventStore interface.
 func (s *EventStore) Load(ctx context.Context, id uuid.UUID) ([]eh.Event, error) {
-	cursor, err := s.events.Find(ctx, bson.M{"aggregate_id": id})
+	cursor, err := s.events.Find(ctx, bson.M{"aggregate_id": id}, options.Find().SetSort(bson.M{"version": 1}))
 	if err != nil {
 		return nil, &eh.EventStoreError{
 			Err:         fmt.Errorf("could not find event: %w", err),
@@ -444,7 +428,7 @@ func (s *EventStore) Load(ctx context.Context, id uuid.UUID) ([]eh.Event, error)
 
 // LoadFrom implements LoadFrom method of the eventhorizon.SnapshotStore interface.
 func (s *EventStore) LoadFrom(ctx context.Context, id uuid.UUID, version int) ([]eh.Event, error) {
-	cursor, err := s.events.Find(ctx, bson.M{"aggregate_id": id, "version": bson.M{"$gte": version}})
+	cursor, err := s.events.Find(ctx, bson.M{"aggregate_id": id, "version": bson.M{"$gte": version}}, options.Find().SetSort(bson.M{"version": 1}))
 	if err != nil {
 		return nil, &eh.EventStoreError{
 			Err:         fmt.Errorf("could not find event: %w", err),
@@ -702,7 +686,7 @@ type evt struct {
 }
 
 // newEvt returns a new evt for an event.
-func newEvt(_ context.Context, event eh.Event) (*evt, error) {
+func newEvt(ctx context.Context, event eh.Event) (*evt, error) {
 	e := &evt{
 		EventType:     event.EventType(),
 		Timestamp:     event.Timestamp(),

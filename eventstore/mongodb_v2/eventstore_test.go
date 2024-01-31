@@ -139,49 +139,6 @@ func TestWithCollectionNamesIntegration(t *testing.T) {
 	}
 }
 
-func TestWithSnapshotCollectionNamesIntegration(t *testing.T) {
-	if testing.Short() {
-		t.Skip("skipping integration test")
-	}
-
-	url, db := makeDB(t)
-
-	snapshotColl := "foo_snapshots"
-
-	store, err := NewEventStore(url, db,
-		WithSnapshotCollectionName(snapshotColl),
-	)
-	if err != nil {
-		t.Fatal("there should be no error:", err)
-	}
-
-	if store == nil {
-		t.Fatal("there should be a store")
-	}
-
-	defer store.Close()
-
-	if store.snapshots.Name() != snapshotColl {
-		t.Fatal("snapshots collection should use custom collection name")
-	}
-
-	// providing empty snapshot collection names should result in an error
-	_, err = NewEventStore(url, db,
-		WithSnapshotCollectionName(""),
-	)
-	if err == nil || err.Error() != "error while applying option: snapshot collection: missing collection name" {
-		t.Fatal("there should be an error")
-	}
-
-	// providing invalid snapshot collection names should result in an error
-	_, err = NewEventStore(url, db,
-		WithSnapshotCollectionName("no space-allowed"),
-	)
-	if err == nil || err.Error() != "error while applying option: snapshot collection: invalid char in collection name (space)" {
-		t.Fatal("there should be an error")
-	}
-}
-
 func makeDB(t *testing.T) (string, string) {
 	// Use MongoDB in Docker with fallback to localhost.
 	url := os.Getenv("MONGODB_ADDR")

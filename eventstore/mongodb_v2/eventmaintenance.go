@@ -18,13 +18,11 @@ import (
 	"context"
 	"fmt"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/mongo"
-
+	eh "github.com/looplab/eventhorizon"
 	// Register uuid.UUID as BSON type.
 	_ "github.com/looplab/eventhorizon/codec/bson"
-
-	eh "github.com/looplab/eventhorizon"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
 )
 
 // Replace implements the Replace method of the eventhorizon.EventStore interface.
