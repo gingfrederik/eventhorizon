@@ -22,14 +22,14 @@ import (
 	"sync"
 	"time"
 
-	eh "github.com/looplab/eventhorizon"
-	"github.com/looplab/eventhorizon/commandhandler/bus"
-	localEventBus "github.com/looplab/eventhorizon/eventbus/local"
-	memoryEventStore "github.com/looplab/eventhorizon/eventstore/memory"
-	"github.com/looplab/eventhorizon/repo/memory"
-	"github.com/looplab/eventhorizon/uuid"
+	eh "github.com/gingfrederik/eventhorizon"
+	"github.com/gingfrederik/eventhorizon/commandhandler/bus"
+	localEventBus "github.com/gingfrederik/eventhorizon/eventbus/local"
+	memoryEventStore "github.com/gingfrederik/eventhorizon/eventstore/memory"
+	"github.com/gingfrederik/eventhorizon/repo/memory"
+	"github.com/gingfrederik/eventhorizon/uuid"
 
-	"github.com/looplab/eventhorizon/examples/guestlist/domains/guestlist"
+	"github.com/gingfrederik/eventhorizon/examples/guestlist/domains/guestlist"
 )
 
 // NOTE: Not named "Integration" to enable running with the unit tests.

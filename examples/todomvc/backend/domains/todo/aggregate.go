@@ -20,9 +20,9 @@ import (
 	"fmt"
 	"time"
 
-	eh "github.com/looplab/eventhorizon"
-	"github.com/looplab/eventhorizon/aggregatestore/events"
-	"github.com/looplab/eventhorizon/uuid"
+	eh "github.com/gingfrederik/eventhorizon"
+	"github.com/gingfrederik/eventhorizon/aggregatestore/events"
+	"github.com/gingfrederik/eventhorizon/uuid"
 )
 
 func init() {

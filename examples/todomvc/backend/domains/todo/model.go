@@ -17,8 +17,8 @@ package todo
 import (
 	"time"
 
-	eh "github.com/looplab/eventhorizon"
-	"github.com/looplab/eventhorizon/uuid"
+	eh "github.com/gingfrederik/eventhorizon"
+	"github.com/gingfrederik/eventhorizon/uuid"
 )
 
 // TodoItem represents each item that can be completed in the todo list.

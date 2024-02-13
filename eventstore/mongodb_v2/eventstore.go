@@ -24,10 +24,10 @@ import (
 	"io"
 	"time"
 
-	eh "github.com/looplab/eventhorizon"
+	eh "github.com/gingfrederik/eventhorizon"
 	// Register uuid.UUID as BSON type.
-	_ "github.com/looplab/eventhorizon/codec/bson"
-	"github.com/looplab/eventhorizon/uuid"
+	_ "github.com/gingfrederik/eventhorizon/codec/bson"
+	"github.com/gingfrederik/eventhorizon/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"

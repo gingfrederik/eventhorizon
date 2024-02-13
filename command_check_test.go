@@ -19,7 +19,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/looplab/eventhorizon/uuid"
+	"github.com/gingfrederik/eventhorizon/uuid"
 )
 
 func TestCheckCommand(t *testing.T) {

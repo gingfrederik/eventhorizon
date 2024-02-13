@@ -19,7 +19,7 @@ import (
 	"encoding/json"
 	"testing"
 
-	eh "github.com/looplab/eventhorizon"
+	eh "github.com/gingfrederik/eventhorizon"
 )
 
 func TestContext(t *testing.T) {

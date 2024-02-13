@@ -7,10 +7,10 @@ import (
 	"testing"
 	"time"
 
-	eh "github.com/looplab/eventhorizon"
-	"github.com/looplab/eventhorizon/mocks"
-	"github.com/looplab/eventhorizon/outbox"
-	"github.com/looplab/eventhorizon/outbox/memory"
+	eh "github.com/gingfrederik/eventhorizon"
+	"github.com/gingfrederik/eventhorizon/mocks"
+	"github.com/gingfrederik/eventhorizon/outbox"
+	"github.com/gingfrederik/eventhorizon/outbox/memory"
 )
 
 func init() {

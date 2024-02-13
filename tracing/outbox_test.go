@@ -19,8 +19,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/looplab/eventhorizon/outbox"
-	"github.com/looplab/eventhorizon/outbox/memory"
+	"github.com/gingfrederik/eventhorizon/outbox"
+	"github.com/gingfrederik/eventhorizon/outbox/memory"
 )
 
 // NOTE: Not named "Integration" to enable running with the unit tests.

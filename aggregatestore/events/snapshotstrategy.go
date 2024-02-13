@@ -17,7 +17,7 @@ package events
 import (
 	"time"
 
-	eh "github.com/looplab/eventhorizon"
+	eh "github.com/gingfrederik/eventhorizon"
 )
 
 // NoSnapshotStrategy no snapshot should be taken.

@@ -20,8 +20,8 @@ import (
 	"fmt"
 	"time"
 
-	eh "github.com/looplab/eventhorizon"
-	"github.com/looplab/eventhorizon/uuid"
+	eh "github.com/gingfrederik/eventhorizon"
+	"github.com/gingfrederik/eventhorizon/uuid"
 )
 
 // AggregateStore is an aggregate store using event sourcing. It

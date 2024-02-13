@@ -21,8 +21,8 @@ import (
 	"github.com/opentracing/opentracing-go"
 	"github.com/opentracing/opentracing-go/ext"
 
-	eh "github.com/looplab/eventhorizon"
-	"github.com/looplab/eventhorizon/uuid"
+	eh "github.com/gingfrederik/eventhorizon"
+	"github.com/gingfrederik/eventhorizon/uuid"
 )
 
 // Repo is a ReadWriteRepo that adds tracing.

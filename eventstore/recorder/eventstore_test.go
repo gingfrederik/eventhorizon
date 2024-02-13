@@ -20,10 +20,10 @@ import (
 	"testing"
 	"time"
 
-	eh "github.com/looplab/eventhorizon"
-	"github.com/looplab/eventhorizon/eventstore"
-	"github.com/looplab/eventhorizon/eventstore/memory"
-	"github.com/looplab/eventhorizon/mocks"
+	eh "github.com/gingfrederik/eventhorizon"
+	"github.com/gingfrederik/eventhorizon/eventstore"
+	"github.com/gingfrederik/eventhorizon/eventstore/memory"
+	"github.com/gingfrederik/eventhorizon/mocks"
 )
 
 // NOTE: Not named "Integration" to enable running with the unit tests.

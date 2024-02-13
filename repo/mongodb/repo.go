@@ -28,10 +28,10 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/writeconcern"
 
 	// Register uuid.UUID as BSON type.
-	_ "github.com/looplab/eventhorizon/codec/bson"
+	_ "github.com/gingfrederik/eventhorizon/codec/bson"
 
-	eh "github.com/looplab/eventhorizon"
-	"github.com/looplab/eventhorizon/uuid"
+	eh "github.com/gingfrederik/eventhorizon"
+	"github.com/gingfrederik/eventhorizon/uuid"
 )
 
 var (

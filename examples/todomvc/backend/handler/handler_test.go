@@ -26,20 +26,20 @@ import (
 	"testing"
 	"time"
 
-	eh "github.com/looplab/eventhorizon"
-	"github.com/looplab/eventhorizon/commandhandler/bus"
-	gcpEventBus "github.com/looplab/eventhorizon/eventbus/gcp"
-	localEventBus "github.com/looplab/eventhorizon/eventbus/local"
-	"github.com/looplab/eventhorizon/eventhandler/waiter"
-	memoryEventStore "github.com/looplab/eventhorizon/eventstore/memory"
-	mongoEventStore "github.com/looplab/eventhorizon/eventstore/mongodb"
-	"github.com/looplab/eventhorizon/middleware/eventhandler/observer"
-	"github.com/looplab/eventhorizon/repo/memory"
-	"github.com/looplab/eventhorizon/repo/mongodb"
-	"github.com/looplab/eventhorizon/repo/version"
-	"github.com/looplab/eventhorizon/uuid"
+	eh "github.com/gingfrederik/eventhorizon"
+	"github.com/gingfrederik/eventhorizon/commandhandler/bus"
+	gcpEventBus "github.com/gingfrederik/eventhorizon/eventbus/gcp"
+	localEventBus "github.com/gingfrederik/eventhorizon/eventbus/local"
+	"github.com/gingfrederik/eventhorizon/eventhandler/waiter"
+	memoryEventStore "github.com/gingfrederik/eventhorizon/eventstore/memory"
+	mongoEventStore "github.com/gingfrederik/eventhorizon/eventstore/mongodb"
+	"github.com/gingfrederik/eventhorizon/middleware/eventhandler/observer"
+	"github.com/gingfrederik/eventhorizon/repo/memory"
+	"github.com/gingfrederik/eventhorizon/repo/mongodb"
+	"github.com/gingfrederik/eventhorizon/repo/version"
+	"github.com/gingfrederik/eventhorizon/uuid"
 
-	"github.com/looplab/eventhorizon/examples/todomvc/backend/domains/todo"
+	"github.com/gingfrederik/eventhorizon/examples/todomvc/backend/domains/todo"
 )
 
 func TestStaticFiles(t *testing.T) {

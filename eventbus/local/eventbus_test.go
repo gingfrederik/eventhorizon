@@ -18,7 +18,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/looplab/eventhorizon/eventbus"
+	"github.com/gingfrederik/eventhorizon/eventbus"
 )
 
 // NOTE: Not named "Integration" to enable running with the unit tests.

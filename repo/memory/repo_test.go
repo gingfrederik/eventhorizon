@@ -18,9 +18,9 @@ import (
 	"context"
 	"testing"
 
-	eh "github.com/looplab/eventhorizon"
-	"github.com/looplab/eventhorizon/mocks"
-	"github.com/looplab/eventhorizon/repo"
+	eh "github.com/gingfrederik/eventhorizon"
+	"github.com/gingfrederik/eventhorizon/mocks"
+	"github.com/gingfrederik/eventhorizon/repo"
 )
 
 // NOTE: Not named "Integration" to enable running with the unit tests.

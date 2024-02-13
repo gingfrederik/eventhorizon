@@ -20,7 +20,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	eh "github.com/looplab/eventhorizon"
+	eh "github.com/gingfrederik/eventhorizon"
 )
 
 // CommandHandler is a HTTP handler for eventhorizon.Commands. Commands must be

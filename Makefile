@@ -76,3 +76,7 @@ clean:
 .PHONY: mongodb_shell
 mongodb_shell:
 	docker run -it --network eventhorizon_default --rm mongo:4.4 mongo --host mongodb test
+
+.PHONY: sqlc
+sqlc:
+	sqlc generate -x -f ./eventstore/postgres/sqlc/sqlc.yml

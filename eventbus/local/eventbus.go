@@ -21,8 +21,8 @@ import (
 	"sync"
 	"time"
 
-	eh "github.com/looplab/eventhorizon"
-	"github.com/looplab/eventhorizon/codec/json"
+	eh "github.com/gingfrederik/eventhorizon"
+	"github.com/gingfrederik/eventhorizon/codec/json"
 )
 
 // DefaultQueueSize is the default queue size per handler for publishing events.

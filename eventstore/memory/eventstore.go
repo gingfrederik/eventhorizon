@@ -21,8 +21,8 @@ import (
 
 	"github.com/jinzhu/copier"
 
-	eh "github.com/looplab/eventhorizon"
-	"github.com/looplab/eventhorizon/uuid"
+	eh "github.com/gingfrederik/eventhorizon"
+	"github.com/gingfrederik/eventhorizon/uuid"
 )
 
 // EventStore is an eventhorizon.EventStore where all events are stored in

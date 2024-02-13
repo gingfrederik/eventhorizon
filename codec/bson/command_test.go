@@ -18,7 +18,7 @@ import (
 	"encoding/base64"
 	"testing"
 
-	"github.com/looplab/eventhorizon/codec"
+	"github.com/gingfrederik/eventhorizon/codec"
 )
 
 func TestCommandCodec(t *testing.T) {
