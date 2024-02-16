@@ -16,9 +16,10 @@ package httputils
 
 import (
 	"context"
-	"encoding/json"
 	"io/ioutil"
 	"net/http"
+
+	"github.com/goccy/go-json"
 
 	eh "github.com/gingfrederik/eventhorizon"
 )

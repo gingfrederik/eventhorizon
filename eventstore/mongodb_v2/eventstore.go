@@ -18,11 +18,12 @@ import (
 	"bytes"
 	"compress/gzip"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"time"
+
+	"github.com/goccy/go-json"
 
 	eh "github.com/gingfrederik/eventhorizon"
 	// Register uuid.UUID as BSON type.

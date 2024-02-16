@@ -16,10 +16,11 @@ package memory
 
 import (
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"sync"
+
+	"github.com/goccy/go-json"
 
 	eh "github.com/gingfrederik/eventhorizon"
 	"github.com/gingfrederik/eventhorizon/uuid"

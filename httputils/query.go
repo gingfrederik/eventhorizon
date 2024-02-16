@@ -15,10 +15,11 @@
 package httputils
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 	"path"
+
+	"github.com/goccy/go-json"
 
 	eh "github.com/gingfrederik/eventhorizon"
 	"github.com/gingfrederik/eventhorizon/uuid"

@@ -16,9 +16,10 @@ package todo
 
 import (
 	"bytes"
-	"encoding/json"
 	"testing"
 	"time"
+
+	"github.com/goccy/go-json"
 
 	"github.com/gingfrederik/eventhorizon/uuid"
 )

@@ -16,8 +16,9 @@ package tracing
 
 import (
 	"context"
-	"encoding/json"
 	"log"
+
+	"github.com/goccy/go-json"
 
 	eh "github.com/gingfrederik/eventhorizon"
 	"github.com/opentracing/opentracing-go"

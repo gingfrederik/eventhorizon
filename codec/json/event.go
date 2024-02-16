@@ -16,9 +16,10 @@ package json
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"time"
+
+	"github.com/goccy/go-json"
 
 	eh "github.com/gingfrederik/eventhorizon"
 	"github.com/gingfrederik/eventhorizon/uuid"

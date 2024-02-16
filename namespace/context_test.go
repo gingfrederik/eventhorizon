@@ -16,8 +16,9 @@ package namespace
 
 import (
 	"context"
-	"encoding/json"
 	"testing"
+
+	"github.com/goccy/go-json"
 
 	eh "github.com/gingfrederik/eventhorizon"
 )
