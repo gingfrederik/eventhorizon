@@ -21,6 +21,14 @@ type Event struct {
 	Metadata      []byte
 }
 
+type Snapshot struct {
+	AggregateID   uuid.UUID
+	AggregateType string
+	Version       int
+	Data          []byte
+	Timestamp     time.Time
+}
+
 type Stream struct {
 	ID            uuid.UUID
 	AggregateType string

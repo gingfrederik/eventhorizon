@@ -11,8 +11,10 @@ import (
 )
 
 type Querier interface {
+	GetSnapshot(ctx context.Context, aggregateID uuid.UUID) (Snapshot, error)
 	GetStream(ctx context.Context, id uuid.UUID) (Stream, error)
 	InsertEvents(ctx context.Context, arg []InsertEventsParams) *InsertEventsBatchResults
+	InsertSnapshot(ctx context.Context, arg InsertSnapshotParams) (Snapshot, error)
 	ListEventsByAggregateID(ctx context.Context, aggregateID uuid.UUID) ([]Event, error)
 	ListEventsByAggregateIDAndVersion(ctx context.Context, arg ListEventsByAggregateIDAndVersionParams) ([]Event, error)
 	UpsertSteam(ctx context.Context, arg UpsertSteamParams) error

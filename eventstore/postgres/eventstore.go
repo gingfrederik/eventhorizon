@@ -16,7 +16,9 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"fmt"
+	"time"
 
 	"github.com/goccy/go-json"
 
@@ -37,6 +39,11 @@ type EventStore struct {
 	eventHandlerAfterSave eh.EventHandler
 	eventHandlerInTX      eh.EventHandler
 }
+
+var (
+	_ eh.EventStore    = (*EventStore)(nil)
+	_ eh.SnapshotStore = (*EventStore)(nil)
+)
 
 // NewEventStore creates a new EventStore with a Postgres URI:
 // `postgres://user:password@hostname:port/db?options`
@@ -86,6 +93,16 @@ func NewEventStoreWithConnPool(ctx context.Context, pool *pgxpool.Pool, options 
 		"updated_at" TIMESTAMP NOT NULL
 	);`); err != nil {
 		return nil, fmt.Errorf("could not create stream table: %w", err)
+	}
+
+	if _, err := pool.Exec(ctx, `CREATE TABLE IF NOT EXISTS "snapshots" (
+		"aggregate_id" UUID PRIMARY KEY,
+		"aggregate_type" VARCHAR(2048) NOT NULL,
+		"version" INTEGER NOT NULL,
+		"data" BYTEA NOT NULL,
+		"timestamp" TIMESTAMP NOT NULL
+	);`); err != nil {
+		return nil, fmt.Errorf("could not create snapshot table: %w", err)
 	}
 
 	return s, nil
@@ -372,6 +389,90 @@ func (s *EventStore) loadFromRows(ctx context.Context, id uuid.UUID, dbEvents []
 // Close closes the database client.
 func (s *EventStore) Close() error {
 	s.pool.Close()
+
+	return nil
+}
+
+func (s *EventStore) LoadSnapshot(ctx context.Context, id uuid.UUID) (*eh.Snapshot, error) {
+	record, err := s.queries.GetSnapshot(ctx, id)
+	if err != nil {
+		if errors.Is(err, pgx.ErrNoRows) {
+			return nil, nil
+		}
+
+		return nil, &eh.EventStoreError{
+			Err:         fmt.Errorf("could not get snapshot: %w", err),
+			Op:          eh.EventStoreOpLoadSnapshot,
+			AggregateID: id,
+		}
+	}
+
+	var (
+		snapshot = new(eh.Snapshot)
+	)
+
+	if snapshot.State, err = eh.CreateSnapshotData(record.AggregateID, eh.AggregateType(record.AggregateType)); err != nil {
+		return nil, &eh.EventStoreError{
+			Err:         fmt.Errorf("could not decode snapshot: %w", err),
+			Op:          eh.EventStoreOpLoadSnapshot,
+			AggregateID: id,
+		}
+	}
+
+	if err = json.Unmarshal(record.Data, snapshot); err != nil {
+		return nil, &eh.EventStoreError{
+			Err:         fmt.Errorf("could not decode snapshot: %w", err),
+			Op:          eh.EventStoreOpLoadSnapshot,
+			AggregateID: id,
+		}
+	}
+
+	return snapshot, nil
+}
+
+func (s *EventStore) SaveSnapshot(ctx context.Context, id uuid.UUID, snapshot eh.Snapshot) error {
+	var err error
+
+	if snapshot.AggregateType == "" {
+		return &eh.EventStoreError{
+			Err:           fmt.Errorf("aggregate type is empty"),
+			Op:            eh.EventStoreOpSaveSnapshot,
+			AggregateID:   id,
+			AggregateType: snapshot.AggregateType,
+		}
+	}
+
+	if snapshot.State == nil {
+		return &eh.EventStoreError{
+			Err:           fmt.Errorf("snapshots state is nil"),
+			Op:            eh.EventStoreOpSaveSnapshot,
+			AggregateID:   id,
+			AggregateType: snapshot.AggregateType,
+		}
+	}
+
+	record := db.InsertSnapshotParams{
+		AggregateID:   id,
+		AggregateType: snapshot.AggregateType.String(),
+		Timestamp:     time.Now(),
+		Version:       snapshot.Version,
+	}
+
+	if record.Data, err = json.Marshal(snapshot); err != nil {
+		return &eh.EventStoreError{
+			Err:         fmt.Errorf("could not marshal snapshot: %w", err),
+			Op:          eh.EventStoreOpSaveSnapshot,
+			AggregateID: id,
+		}
+	}
+
+	if _, err := s.queries.InsertSnapshot(ctx, record); err != nil {
+		return &eh.EventStoreError{
+			Err:         fmt.Errorf("could not save snapshot: %w", err),
+			Op:          eh.EventStoreOpSaveSnapshot,
+			AggregateID: id,
+		}
+	}
 
 	return nil
 }
