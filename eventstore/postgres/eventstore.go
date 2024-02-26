@@ -407,9 +407,11 @@ func (s *EventStore) LoadSnapshot(ctx context.Context, id uuid.UUID) (*eh.Snapsh
 		}
 	}
 
-	var (
-		snapshot = new(eh.Snapshot)
-	)
+	snapshot := &eh.Snapshot{
+		Version:       record.Version,
+		AggregateType: eh.AggregateType(record.AggregateType),
+		Timestamp:     record.Timestamp,
+	}
 
 	if snapshot.State, err = eh.CreateSnapshotData(record.AggregateID, eh.AggregateType(record.AggregateType)); err != nil {
 		return nil, &eh.EventStoreError{
@@ -419,7 +421,7 @@ func (s *EventStore) LoadSnapshot(ctx context.Context, id uuid.UUID) (*eh.Snapsh
 		}
 	}
 
-	if err = json.Unmarshal(record.Data, snapshot); err != nil {
+	if err = json.Unmarshal(record.Data, &snapshot.State); err != nil {
 		return nil, &eh.EventStoreError{
 			Err:         fmt.Errorf("could not decode snapshot: %w", err),
 			Op:          eh.EventStoreOpLoadSnapshot,
@@ -458,7 +460,7 @@ func (s *EventStore) SaveSnapshot(ctx context.Context, id uuid.UUID, snapshot eh
 		Version:       snapshot.Version,
 	}
 
-	if record.Data, err = json.Marshal(snapshot); err != nil {
+	if record.Data, err = json.Marshal(snapshot.State); err != nil {
 		return &eh.EventStoreError{
 			Err:         fmt.Errorf("could not marshal snapshot: %w", err),
 			Op:          eh.EventStoreOpSaveSnapshot,
