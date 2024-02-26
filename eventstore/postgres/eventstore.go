@@ -18,6 +18,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"path/filepath"
 	"time"
 
 	"github.com/goccy/go-json"
@@ -26,6 +27,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	eh "github.com/gingfrederik/eventhorizon"
+	"github.com/gingfrederik/eventhorizon/eventstore/postgres/sqlc"
 	"github.com/gingfrederik/eventhorizon/eventstore/postgres/sqlc/db"
 	"github.com/gingfrederik/eventhorizon/uuid"
 )
@@ -72,37 +74,22 @@ func NewEventStoreWithConnPool(ctx context.Context, pool *pgxpool.Pool, options 
 		}
 	}
 
-	if _, err := pool.Exec(ctx, `CREATE TABLE IF NOT EXISTS "events" (
-		"position" BIGSERIAL PRIMARY KEY,
-		"event_type" VARCHAR(2048) NOT NULL,
-		"timestamp" TIMESTAMP NOT NULL,
-		"aggregate_type" VARCHAR(2048) NOT NULL,
-		"aggregate_id" UUID NOT NULL,
-		"version" INTEGER NOT NULL,
-		"data" JSONB,
-		"metadata" JSONB
-	);`); err != nil {
-		return nil, fmt.Errorf("could not create event table: %w", err)
+	dir, err := sqlc.SchemaSQLs.ReadDir(sqlc.Path)
+	if err != nil {
+		return nil, fmt.Errorf("could not read schema: %w", err)
 	}
 
-	if _, err := pool.Exec(ctx, `CREATE TABLE IF NOT EXISTS "streams" (
-		"id" UUID PRIMARY KEY,
-		"aggregate_type" VARCHAR(2048) NOT NULL,
-		"position" BIGINT NOT NULL,
-		"version" INTEGER NOT NULL,
-		"updated_at" TIMESTAMP NOT NULL
-	);`); err != nil {
-		return nil, fmt.Errorf("could not create stream table: %w", err)
-	}
+	for _, file := range dir {
+		fileName := file.Name()
 
-	if _, err := pool.Exec(ctx, `CREATE TABLE IF NOT EXISTS "snapshots" (
-		"aggregate_id" UUID PRIMARY KEY,
-		"aggregate_type" VARCHAR(2048) NOT NULL,
-		"version" INTEGER NOT NULL,
-		"data" BYTEA NOT NULL,
-		"timestamp" TIMESTAMP NOT NULL
-	);`); err != nil {
-		return nil, fmt.Errorf("could not create snapshot table: %w", err)
+		sql, err := sqlc.SchemaSQLs.ReadFile(filepath.Join(sqlc.Path, fileName))
+		if err != nil {
+			return nil, fmt.Errorf("could not read %s: %w", fileName, err)
+		}
+
+		if _, err := pool.Exec(ctx, string(sql)); err != nil {
+			return nil, fmt.Errorf("could not execute %s: %w", fileName, err)
+		}
 	}
 
 	return s, nil
