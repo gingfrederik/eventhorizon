@@ -8,3 +8,5 @@ CREATE TABLE IF NOT EXISTS "events" (
     "data" JSONB,
     "metadata" JSONB
 );
+
+CREATE INDEX IF NOT EXISTS "events_aggregate_id_version_idx" ON "events" ("aggregate_id", "version");
