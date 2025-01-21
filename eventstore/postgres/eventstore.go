@@ -233,6 +233,8 @@ func (s *EventStore) Save(ctx context.Context, events []eh.Event, originalVersio
 			return fmt.Errorf("could not update stream: %w", err)
 		}
 
+		ctx = NewContextWithTx(ctx, tx)
+
 		if s.eventHandlerInTX != nil {
 			for _, e := range events {
 				if err := s.eventHandlerInTX.HandleEvent(ctx, e); err != nil {
