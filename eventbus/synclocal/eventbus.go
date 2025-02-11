@@ -67,8 +67,8 @@ func (b *EventBus) HandlerType() eh.EventHandlerType {
 
 // HandleEvent implements the HandleEvent method of the eventhorizon.EventHandler interface.
 func (b *EventBus) HandleEvent(ctx context.Context, event eh.Event) error {
-	b.registeredMu.Lock()
-	defer b.registeredMu.Unlock()
+	b.registeredMu.RLock()
+	defer b.registeredMu.RUnlock()
 
 	for handlerType, handler := range b.registered {
 		if !handler.matcher.Match(event) {
